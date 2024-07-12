@@ -25,7 +25,7 @@ export default {
         commentAuditsStatus: false,
         postAuditsStatus: false,
         postDelStatus: false,
-        apiVersion: "org.xiqi.notifyme/v1alpha1",
+        apiVersion: "run.halo.bark.notifyme/v1alpha1",
         kind: "NotifyMe",
         metadata: {
           name: "notify-config"
@@ -43,7 +43,7 @@ export default {
     },
 
     getData() {
-      http.get("/apis/org.xiqi.notifyme/v1alpha1/notifymes")
+      http.get("/apis/run.halo.bark.notifyme/v1alpha1/notifymes")
         .then((res) => {
           if (res.data.items.length > 0) {
             this.data = res.data.items[0]
@@ -55,7 +55,7 @@ export default {
     },
     createData() {
       if (this.update) {
-        http.put("/apis/org.xiqi.notifyme/v1alpha1/notifymes/notify-config",
+        http.put("/apis/run.halo.bark.notifyme/v1alpha1/notifymes/notify-config",
           this.data
         ).then((response) => {
           if (response.status == 200) {
@@ -71,7 +71,7 @@ export default {
           this.saveTip = true
         })
       } else {
-        http.post("/apis/org.xiqi.notifyme/v1alpha1/notifymes", this.data)
+        http.post("/apis/run.halo.bark.notifyme/v1alpha1/notifymes", this.data)
           .then((response) => {
             if (response.status == 201) {
               this.saveTip = true
@@ -155,8 +155,10 @@ export default {
         <div class="!p-0 card-body">
           <div style="padding: 40px;">
             <div class="tip">
-              🎈 通过AnPush的接口实现的通知推送, 免费套餐已足够博客使用。 <a href="https://anpush.com/?halo" target="_blank"
-                                                     style="text-decoration: underline;color: #000000;"> 获取密钥 > </a>
+              🎈 通过AnPush的接口实现的通知推送, 免费套餐已足够博客使用。 <a href="https://anpush.com/?halo"
+                                                                           target="_blank"
+                                                                           style="text-decoration: underline;color: #000000;">
+              获取密钥 > </a>
               <br>
               <div>根据官网描述可以推送至12个应用，我测试了微信、企业微信、微信测试号、飞书、钉钉都没有问题</div>
             </div>
