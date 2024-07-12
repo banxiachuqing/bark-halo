@@ -2,8 +2,7 @@ package run.halo.bark.strategy;
 
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import run.halo.app.core.extension.content.Comment;
 import run.halo.app.core.extension.content.Post;
@@ -11,6 +10,7 @@ import run.halo.app.extension.ExtensionClient;
 import run.halo.bark.domain.NotifyMe;
 import run.halo.bark.domain.PushDo;
 import run.halo.bark.event.NotifyBaseEvent;
+import run.halo.bark.util.BarkPushUtils;
 import run.halo.bark.util.PushUtil;
 
 /**
@@ -21,19 +21,19 @@ import run.halo.bark.util.PushUtil;
  * @date 2024/07/12
  * @history
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class CommentStrategy implements NotifyStrategy {
-    private static final Logger log = LoggerFactory.getLogger(CommentStrategy.class);
     private final ExtensionClient client;
     private final PushUtil pushUtil;
 
     @Override
     public void process(NotifyBaseEvent event, NotifyMe setting) {
+        log.info("-------------------动作1");
         Comment commentInfo = (Comment) event.getExtension();
         Comment.CommentSpec commentSpec = commentInfo.getSpec();
-        if (!commentSpec.getOwner().getName().equals("admin") &&
-            commentInfo.getMetadata().getDeletionTimestamp() == null) {  // 这里有点坑爹，删除文章了也发通知删除评论通知
+        if (!commentSpec.getOwner().getName().equals("admin") && commentInfo.getMetadata().getDeletionTimestamp() == null) {  // 这里有点坑爹，删除文章了也发通知删除评论通知
             // 不是管理员的话就推送通知
             String postMetaName = commentSpec.getSubjectRef().getName();
             Optional<Post> postInfo = client.fetch(Post.class, postMetaName);
@@ -85,5 +85,7 @@ public class CommentStrategy implements NotifyStrategy {
         pushDo.setTitle(title);
         pushDo.setContent(content);
         pushUtil.sendRequest(pushDo, setting);
+        BarkPushUtils.push(setting, pushDo);
+
     }
 }

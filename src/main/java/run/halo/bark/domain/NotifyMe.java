@@ -17,11 +17,17 @@ public class NotifyMe extends AbstractExtension {
     @Schema(requiredMode = REQUIRED, minLength = 10)
     private String apiKey;
 
-    @Schema(requiredMode = REQUIRED, minLength = 4)
+    @Schema(requiredMode = REQUIRED)
     private String channel;
 
     @Schema(requiredMode = REQUIRED)
+    private String[] subscriptions;
+
+    @Schema(requiredMode = REQUIRED)
     private String siteUrl;  //站点文章的路径
+
+    @Schema(requiredMode = REQUIRED)
+    private String serverAddress;
 
     @Schema(defaultValue = "false")
     private Boolean status; // 通知总开关
