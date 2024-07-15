@@ -11,7 +11,6 @@ import run.halo.bark.domain.NotifyMe;
 import run.halo.bark.domain.PushDo;
 import run.halo.bark.event.NotifyBaseEvent;
 import run.halo.bark.util.BarkPushUtils;
-import run.halo.bark.util.PushUtil;
 
 /**
  * Copyright (c) 2022 wly Corporation.
@@ -26,14 +25,13 @@ import run.halo.bark.util.PushUtil;
 @RequiredArgsConstructor
 public class CommentStrategy implements NotifyStrategy {
     private final ExtensionClient client;
-    private final PushUtil pushUtil;
-
     @Override
     public void process(NotifyBaseEvent event, NotifyMe setting) {
-        log.info("-------------------动作1");
         Comment commentInfo = (Comment) event.getExtension();
         Comment.CommentSpec commentSpec = commentInfo.getSpec();
-        if (!commentSpec.getOwner().getName().equals("admin") && commentInfo.getMetadata().getDeletionTimestamp() == null) {  // 这里有点坑爹，删除文章了也发通知删除评论通知
+        if (!commentSpec.getOwner().getName().equals("admin")
+            && commentInfo.getMetadata().getDeletionTimestamp()
+            == null) {  // 这里有点坑爹，删除文章了也发通知删除评论通知
             // 不是管理员的话就推送通知
             String postMetaName = commentSpec.getSubjectRef().getName();
             Optional<Post> postInfo = client.fetch(Post.class, postMetaName);
@@ -61,7 +59,8 @@ public class CommentStrategy implements NotifyStrategy {
                 commentSpec.getContent(),
                 setting.getSiteUrl() + post.getStatus().getPermalink()
             );
-            push(title, content, setting);
+            push(PushDo.builder().url(setting.getSiteUrl() + post.getStatus().getPermalink())
+                .title(title).content(content).setting(setting).build());
         }
     }
 
@@ -76,16 +75,13 @@ public class CommentStrategy implements NotifyStrategy {
                 commentSpec.getContent(),
                 setting.getSiteUrl() + "/console/comments"
             );
-            push(title, content, setting);
+
+            push(PushDo.builder().url(setting.getSiteUrl() + "/console/comments")
+                .title(title).content(content).setting(setting).build());
         }
     }
 
-    private void push(String title, String content, NotifyMe setting) { // 推送
-        PushDo pushDo = new PushDo();
-        pushDo.setTitle(title);
-        pushDo.setContent(content);
-        pushUtil.sendRequest(pushDo, setting);
-        BarkPushUtils.push(setting, pushDo);
-
+    private void push(PushDo pushDo) { // 推送
+        BarkPushUtils.push(pushDo);
     }
 }

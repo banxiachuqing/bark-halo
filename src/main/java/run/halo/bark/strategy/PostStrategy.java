@@ -1,5 +1,7 @@
 package run.halo.bark.strategy;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -13,7 +15,7 @@ import run.halo.app.extension.ExtensionClient;
 import run.halo.bark.domain.NotifyMe;
 import run.halo.bark.domain.PushDo;
 import run.halo.bark.event.NotifyBaseEvent;
-import run.halo.bark.util.PushUtil;
+import run.halo.bark.util.BarkPushUtils;
 
 
 /**
@@ -30,7 +32,6 @@ import run.halo.bark.util.PushUtil;
 public class PostStrategy implements NotifyStrategy {
     private final ExtensionClient client;
 
-    private final PushUtil pushUtil;
 
     @Override
     public void process(NotifyBaseEvent event, NotifyMe setting) {
@@ -39,16 +40,17 @@ public class PostStrategy implements NotifyStrategy {
         这里其实是落库前的数据,目前是发布前的事件，是取不到文章链接的。
         放到异步队列里，3秒后执行，基本都会成功，不成功也无伤大雅
          */
+        log.info("---------文章操作进入:{}", JSON.toJSONString(event));
         Extension extension = event.getExtension();
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
         executorService.schedule(() -> {
-            if (extension.getMetadata().getLabels().containsKey("content.halo.run/deleted") &&
-                extension.getMetadata().getLabels().get("content.halo.run/deleted").equals("true")
-            ) {
-                //删除文章到这里就终止了
+            JSONObject json = (JSONObject) JSON.toJSON(event);
+            JSONObject spec = json.getJSONObject("extension").getJSONObject("spec");
+            if (spec.getBoolean("deleted")) {
                 delete((Post) extension, setting);
                 return;
             }
+            log.info("---------文章异步操作进入2");
             Optional<Post> postInfo = client.fetch(Post.class, extension.getMetadata().getName());
             postInfo.ifPresent(post -> {
                 if (post.getStatus().getPhase().equals("DRAFT") && !post.getSpec().getOwner()
@@ -61,7 +63,7 @@ public class PostStrategy implements NotifyStrategy {
                 }
 
             });
-        }, 4, TimeUnit.SECONDS);
+        }, 10, TimeUnit.SECONDS);
         executorService.shutdown();
     }
 
@@ -72,7 +74,10 @@ public class PostStrategy implements NotifyStrategy {
                 post.getSpec().getTitle(),
                 setting.getSiteUrl() + post.getStatus().getPermalink(),
                 getExcerpt(post.getStatus().getExcerpt()));
-            push(title, content, setting);
+
+
+            push(PushDo.builder().url(setting.getSiteUrl() + post.getStatus().getPermalink())
+                .title(title).content(content).setting(setting).build());
         }
     }
 
@@ -83,7 +88,8 @@ public class PostStrategy implements NotifyStrategy {
                 String.format("%s...\n\n%s", getExcerpt(post.getStatus().getExcerpt()),
                     String.format("[立刻审核](%s)",
                         setting.getSiteUrl() + "/console/posts"));
-            push(title, content, setting);
+            push(PushDo.builder().url(setting.getSiteUrl() + "/console/posts")
+                .title(title).content(content).setting(setting).build());
         }
     }
 
@@ -94,15 +100,13 @@ public class PostStrategy implements NotifyStrategy {
                 post.getSpec().getTitle(),
                 setting.getSiteUrl() + post.getStatus().getPermalink(),
                 getExcerpt(post.getStatus().getExcerpt()));
-            push(title, content, setting);
+            push(PushDo.builder().url(setting.getSiteUrl() + post.getStatus().getPermalink())
+                .title(title).content(content).setting(setting).build());
         }
     }
 
-    private void push(String title, String content, NotifyMe setting) { // 推送
-        PushDo pushDo = new PushDo();
-        pushDo.setTitle(title);
-        pushDo.setContent(content);
-        pushUtil.sendRequest(pushDo, setting);
+    private void push(PushDo pushDo) { // 推送
+        BarkPushUtils.push(pushDo);
     }
 
     private String getExcerpt(String excerpt) {

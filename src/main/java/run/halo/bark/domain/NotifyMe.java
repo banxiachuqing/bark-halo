@@ -14,11 +14,6 @@ import run.halo.app.extension.GVK;
     version = "v1alpha1", singular = "notifyme", plural = "notifymes")
 public class NotifyMe extends AbstractExtension {
 
-    @Schema(requiredMode = REQUIRED, minLength = 10)
-    private String apiKey;
-
-    @Schema(requiredMode = REQUIRED)
-    private String channel;
 
     @Schema(requiredMode = REQUIRED)
     private String[] subscriptions;

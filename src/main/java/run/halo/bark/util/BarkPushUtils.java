@@ -6,7 +6,6 @@ import com.alibaba.fastjson.JSON;
 import io.netty.handler.codec.http.HttpScheme;
 import lombok.extern.slf4j.Slf4j;
 import run.halo.bark.domain.BarkBody;
-import run.halo.bark.domain.NotifyMe;
 import run.halo.bark.domain.PushDo;
 
 /**
@@ -20,17 +19,17 @@ import run.halo.bark.domain.PushDo;
 @Slf4j
 public class BarkPushUtils {
 
-    public static void push(NotifyMe setting, PushDo pushDo) {
+    public static void push(PushDo pushDo) {
 
         BarkBody body = BarkBody.builder()
             .title(pushDo.getTitle())
             .body(pushDo.getContent())
-            .url("https://www.baidu.com")
+            .url(pushDo.getUrl())
             .build();
 
 
-        for (String subscription : setting.getSubscriptions()) {
-            String url = HttpScheme.HTTPS.toString() + "://" + setting.getServerAddress() + "/"
+        for (String subscription : pushDo.getSetting().getSubscriptions()) {
+            String url = HttpScheme.HTTPS + "://" + pushDo.getSetting().getServerAddress() + "/"
                 + subscription;
             log.info("订阅用户:{},请求链接:{}", subscription, url);
             HttpResponse response = HttpUtil.createPost(url)

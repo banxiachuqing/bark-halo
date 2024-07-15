@@ -20,8 +20,10 @@ public class BarkBody {
     private String title;
     private int badge;
     private String category;
-    private String sound;
-    private String icon;
+    @Builder.Default
+    private String sound = "shake";
+    @Builder.Default
+    private String icon="https://photo.tuchong.com/18681/f/26970923.jpg";
     private String group;
     private String url;
 }
