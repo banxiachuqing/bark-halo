@@ -1,4 +1,5 @@
 # Bark通知的Halo插件
+## 基于halo插件快速开发模板项目
 当有新评论、新文章、等待审核的评论、等待审核的文章时将内容通知通过Bark推送到手机
 
 # 使用方法
@@ -18,6 +19,7 @@ Bark服务地址 ---对应部署bark的服务器地址,如没有也可使用bark
 
 # 支持
 > bark地址:https://github.com/Finb/Bark
+> halo模版项目:https://github.com/halo-dev/plugin-starter
 
 # 待开发功能
 1. 评论回复通知
