@@ -221,7 +221,7 @@ export default {
                   class="formkit-inner inline-flex items-center w-full relative box-border border border-gray-300 formkit-invalid:border-red-500 h-9 rounded-base overflow-hidden focus-within:border-primary focus-within:shadow-sm sm:max-w-lg transition-all">
                   <input
                     class="nm-input formkit-input bg-white resize-none w-full text-black block transition-all h-full px-3 text-sm"
-                    type="text" v-model="data.serverAddress" placeholder="注意:仅支持https  例如:bark.aiyatou.cn"/>
+                    type="text" v-model="data.serverAddress" placeholder="注意:仅支持https  例如:api.day.app"/>
                 </div>
               </div>
               
