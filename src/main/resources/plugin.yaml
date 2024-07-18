@@ -11,6 +11,9 @@ spec:
   logo: notify.png
   displayName: "bark消息通知"
   description: "集成bark消息通知功能"
+  homepage: https://github.com/banxiachuqing/bark-halo/blob/main/README.md
+  repo: https://github.com/banxiachuqing/bark-halo
+  issues: https://github.com/banxiachuqing/bark-halo/issues
   license:
     - name: "GPL-3.0"
       url: "https://github.com/halo-dev/plugin-starter/blob/main/LICENSE"
