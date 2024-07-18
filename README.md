@@ -10,7 +10,7 @@
 
 -------
 
-Bark服务地址 ---对应部署bark的服务器地址,如没有也可使用bark官方提供的地址:api.day.app (建议私有化部署,[参考](https://github.com/Finb/Bark))
+Bark服务地址 ---对应部署bark的服务器地址,如没有也可使用bark官方提供的地址:api.day.app (建议私有化部署,[传送门](https://day.app/2018/06/bark-server-document/))
 
 -------
 
