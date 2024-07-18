@@ -10,12 +10,15 @@
 
 -------
 
-Bark服务地址 ---对应部署bark的服务器地址,如没有也可使用bark官方提供的地址:api.day.app
+Bark服务地址 ---对应部署bark的服务器地址,如没有也可使用bark官方提供的地址:api.day.app (建议私有化部署,[参考](https://github.com/Finb/Bark))
 
 -------
 
 订阅地址  ---为bark对应的user_key,如图
 ![img_1.png](img_1.png)
+
+# 设置界面
+![img_2.png](img_2.png)
 
 # 支持
 > bark地址:https://github.com/Finb/Bark
@@ -23,5 +26,6 @@ Bark服务地址 ---对应部署bark的服务器地址,如没有也可使用bark
 
 # 待开发功能
 1. 评论回复通知
-2. 文章事件优化
+2. 自定义通知模板
 3. 推送测试功能
+4. 文章更新通知
